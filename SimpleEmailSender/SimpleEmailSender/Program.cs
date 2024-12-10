@@ -14,6 +14,7 @@ internal static class Program
     {
         Console.WriteLine("Hello, World!");
         var jsonFilePath = GetResourcePath("Resources/Config.json");
+        var body = File.ReadAllText(GetResourcePath("Resources/EmailBody.txt"));
         var jsonString = File.ReadAllText(jsonFilePath);
 
         var config = JsonSerializer.Deserialize<Config>(jsonString, new JsonSerializerOptions
@@ -35,10 +36,22 @@ internal static class Program
             UseDefaultCredentials = false,
             Credentials = new NetworkCredential(config.Sender, config.SenderPassword)
         };
-        Console.WriteLine("Testing...");
+        Console.WriteLine($"Sending to {config.TestRecipients.Count} test recipients...");
         foreach (var recipient in config.TestRecipients)
         {
-            Console.WriteLine($"Sending email to {recipient}, confirm by pressing any key");
+            var message = new MailMessage(config.Sender, recipient)
+            {
+                Subject = "New Article: Intro to Genetic Programming: Can Evolution Write Computer Programs?",
+                Body = body
+            };
+            Console.WriteLine($"Sending email to test recipient {recipient}");
+            smtpClient.Send(message);
+        }
+
+        Console.WriteLine($"Sending to {config.Recipients.Count} real recipients...");
+        foreach (var recipient in config.TestRecipients)
+        {
+            Console.WriteLine($"Sending email to real recipient {recipient}, confirm by pressing any key");
             Console.ReadKey();
             smtpClient.Send(config.Sender, recipient, "subject", "body");
         }

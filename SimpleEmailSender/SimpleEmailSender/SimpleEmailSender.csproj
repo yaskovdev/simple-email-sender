@@ -9,9 +9,8 @@
 
     <ItemGroup>
         <Content Include="Resources\Config.json" CopyToOutputDirectory="PreserveNewest" />
-        <Content Update="Resources\Config.Example.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        <Content Include="Resources\Config.Example.json" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="Resources\EmailBody.txt" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>
