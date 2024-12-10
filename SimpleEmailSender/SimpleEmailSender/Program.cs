@@ -14,7 +14,18 @@ internal static class Program
     {
         var jsonFilePath = GetResourcePath("Resources/Config.json");
         var body = File.ReadAllText(GetResourcePath("Resources/EmailBody.html"));
-        var subject = "New Article: Intro to Genetic Programming: Can Evolution Write Computer Programs?";
+        var subject = "";
+
+        if (string.IsNullOrEmpty(subject))
+        {
+            throw new Exception("Subject is empty");
+        }
+
+        if (body.Contains("intro-to-genetic-programming-can-evolution-write-computer-programs"))
+        {
+            throw new Exception("Body has not been updated"); // TODO: improve validation
+        }
+
         var jsonString = File.ReadAllText(jsonFilePath);
 
         var config = JsonSerializer.Deserialize<Config>(jsonString, new JsonSerializerOptions
@@ -22,10 +33,6 @@ internal static class Program
             Converters = { new JsonStringEnumConverter() },
             PropertyNameCaseInsensitive = true
         });
-
-        Console.WriteLine($"Sender: {config.Sender}");
-        Console.WriteLine($"Test recipients: {string.Join(", ", config.TestRecipients)}");
-        Console.WriteLine($"Recipients: {string.Join(", ", config.Recipients)}");
 
         using var smtp = new SmtpClient();
         smtp.Host = "smtp.gmail.com";
